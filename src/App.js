@@ -13,28 +13,28 @@ const services = [
     name: '🤖 Telegram-бот',
     description: 'Автоматизация, заявки, чаты, кнопки, интеграции.',
     details: ['Онлайн-команды', 'Кастомные админки', 'Webhook/API связка'],
-    image: 'https://i.imgur.com/5QnJX0w.png'
+    image: '/img/bot.png'
   },
   {
     id: 'webapp',
     name: '📱 Telegram WebApp',
     description: 'Мини-приложения внутри Telegram. Магазины, аукционы, формы.',
     details: ['Каталоги и корзины', 'Привязка к боту', 'Работа с Telegram Stars'],
-    image: 'https://i.imgur.com/ugMU09f.png'
+    image: '/img/web.png'
   },
   {
     id: 'backend',
     name: '⚙️ Backend/API',
     description: 'Серверная логика на FastAPI, Supabase, базы данных, интеграции.',
     details: ['Авторизация', 'Админ-панели', 'REST API и вебхуки'],
-    image: 'https://i.imgur.com/lU9I4i2.png'
+    image: '/img/backend.png'
   },
   {
     id: 'custom',
     name: '💡 Другое',
     description: 'Если у тебя что-то особенное — обсудим, придумаем, сделаем.',
     details: ['📬 Telegram для связи: ', '@maxwingift'],
-    image: 'https://i.imgur.com/yV4XFAK.png'
+    image: '/img/hui.png'
   },
 ];
 
@@ -53,36 +53,15 @@ function App() {
       description: desc,
       created_at: new Date().toISOString()
     };
-  
+
     const { error } = await supabase.from('orders').insert(payload);
-  
+
     if (error) {
       console.error('[SUPABASE ERROR]', error.message, error.details);
       alert('❌ Ошибка при отправке. Попробуй позже.');
     } else {
       setSent(true);
     }
-  };
-  
-
-  const cardStyle = {
-    border: '1px solid #e0e0e0',
-    padding: 15,
-    marginBottom: 15,
-    borderRadius: 16,
-    cursor: 'pointer',
-    backgroundColor: '#fff',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-    transition: 'transform 0.2s',
-  };
-
-  const inputStyle = {
-    width: '100%',
-    padding: '10px',
-    borderRadius: '12px',
-    border: '1px solid #ccc',
-    marginBottom: '12px',
-    fontSize: '15px'
   };
 
   const buttonStyle = {
@@ -109,11 +88,31 @@ function App() {
   if (!selected) {
     return (
       <div style={{ padding: 20, fontFamily: 'Arial', background: '#f2f2f7', minHeight: '100vh' }}>
-        <h1 style={{ fontWeight: '600', fontSize: '22px', marginBottom: 20 }}>🎯 MaxWin — выбери услугу</h1>
+        <div style={{ textAlign: 'center', marginBottom: 30 }}>
+          <img src="/img/logo.png" alt="MaxWin Logo" style={{ width: 100, borderRadius: 20 }} />
+          <h1 style={{ fontWeight: '700', fontSize: '26px', marginTop: 10 }}>MaxWin — Telegram WebApps под ключ</h1>
+          <p style={{ color: '#666', fontSize: '14px' }}>Боты, магазины, аукционы и автоматизация под ваш проект</p>
+        </div>
+
         {services.map((s) => (
-          <div key={s.id} onClick={() => setSelected(s)} style={cardStyle}>
-            <strong>{s.name}</strong>
-            <p style={{ marginTop: 6, fontSize: '14px', color: '#555' }}>{s.description}</p>
+          <div
+            key={s.id}
+            onClick={() => setSelected(s)}
+            style={{
+              marginBottom: 25,
+              backgroundColor: '#fff',
+              borderRadius: 18,
+              overflow: 'hidden',
+              boxShadow: '0 4px 18px rgba(0,0,0,0.07)',
+              cursor: 'pointer',
+              transition: '0.2s ease',
+            }}
+          >
+            <img src={s.image} alt={s.name} style={{ width: '100%', height: 'auto' }} />
+            <div style={{ padding: 15 }}>
+              <h3 style={{ margin: 0, fontSize: 18 }}>{s.name}</h3>
+              <p style={{ marginTop: 6, fontSize: 14, color: '#555' }}>{s.description}</p>
+            </div>
           </div>
         ))}
       </div>
@@ -131,9 +130,9 @@ function App() {
       </ul>
       <img src={selected.image} alt="preview" style={{ width: '100%', borderRadius: '12px', marginBottom: 15 }} />
 
-      <input style={inputStyle} placeholder="Твоё имя" value={name} onChange={e => setName(e.target.value)} />
-      <input style={inputStyle} placeholder="Telegram username" value={tgUser} onChange={e => setTgUser(e.target.value)} />
-      <textarea style={inputStyle} placeholder="Опиши задачу" value={desc} onChange={e => setDesc(e.target.value)} rows="4" />
+      <input style={{ width: '100%', padding: 10, borderRadius: 12, border: '1px solid #ccc', marginBottom: 12 }} placeholder="Твоё имя" value={name} onChange={e => setName(e.target.value)} />
+      <input style={{ width: '100%', padding: 10, borderRadius: 12, border: '1px solid #ccc', marginBottom: 12 }} placeholder="Telegram username" value={tgUser} onChange={e => setTgUser(e.target.value)} />
+      <textarea style={{ width: '100%', padding: 10, borderRadius: 12, border: '1px solid #ccc', marginBottom: 12 }} placeholder="Опиши задачу" value={desc} onChange={e => setDesc(e.target.value)} rows="4" />
 
       <button onClick={sendOrder} style={buttonStyle}>✅ Отправить заказ</button><br />
       <button onClick={() => setSelected(null)} style={{ ...buttonStyle, backgroundColor: '#e0e0e0', color: '#333' }}>← Назад</button>
