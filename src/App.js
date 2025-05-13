@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
 import './App.css';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  'https://tdjtytelczdlkgahgojv.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkanR5dGVsY3pkbGtnYWhnb2p2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcxNDMwOTQsImV4cCI6MjA2MjcxOTA5NH0.5BlORDUbpYp8rAAwacb56XrW3dtEbTarDpFtf9VsWiI'
+);
 
 const services = [
   {
@@ -27,7 +33,7 @@ const services = [
     id: 'custom',
     name: '💡 Другое',
     description: 'Если у тебя что-то особенное — обсудим, придумаем, сделаем.',
-    details: ['Игры', 'Витрины', 'Что угодно'],
+    details: ['📬 Telegram для связи: ', '@maxwingift'],
     image: 'https://i.imgur.com/yV4XFAK.png'
   },
 ];
@@ -37,19 +43,22 @@ function App() {
   const [name, setName] = useState('');
   const [tgUser, setTgUser] = useState('');
   const [desc, setDesc] = useState('');
+  const [sent, setSent] = useState(false);
 
-  const sendOrder = () => {
+  const sendOrder = async () => {
     const payload = {
       service: selected.name,
       name,
       telegram_username: tgUser,
       description: desc,
+      created_at: new Date().toISOString()
     };
 
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.sendData(JSON.stringify(payload));
+    const { error } = await supabase.from('orders').insert(payload);
+    if (error) {
+      alert('❌ Ошибка при отправке. Попробуй позже.');
     } else {
-      alert('❌ Telegram WebApp API не найден');
+      setSent(true);
     }
   };
 
@@ -84,16 +93,22 @@ function App() {
     marginBottom: 10
   };
 
+  if (sent) {
+    return (
+      <div style={{ padding: 20, fontFamily: 'Arial', background: '#f2f2f7', minHeight: '100vh', textAlign: 'center' }}>
+        <h2>✅ Заявка отправлена!</h2>
+        <p>Мы скоро с тобой свяжемся ✉️</p>
+        <button onClick={() => { setSelected(null); setSent(false); }} style={buttonStyle}>← Назад</button>
+      </div>
+    );
+  }
+
   if (!selected) {
     return (
       <div style={{ padding: 20, fontFamily: 'Arial', background: '#f2f2f7', minHeight: '100vh' }}>
         <h1 style={{ fontWeight: '600', fontSize: '22px', marginBottom: 20 }}>🎯 MaxWin — выбери услугу</h1>
         {services.map((s) => (
-          <div
-            key={s.id}
-            onClick={() => setSelected(s)}
-            style={cardStyle}
-          >
+          <div key={s.id} onClick={() => setSelected(s)} style={cardStyle}>
             <strong>{s.name}</strong>
             <p style={{ marginTop: 6, fontSize: '14px', color: '#555' }}>{s.description}</p>
           </div>
