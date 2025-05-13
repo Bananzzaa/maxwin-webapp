@@ -53,14 +53,17 @@ function App() {
       description: desc,
       created_at: new Date().toISOString()
     };
-
+  
     const { error } = await supabase.from('orders').insert(payload);
+  
     if (error) {
+      console.error('[SUPABASE ERROR]', error.message, error.details);
       alert('❌ Ошибка при отправке. Попробуй позже.');
     } else {
       setSent(true);
     }
   };
+  
 
   const cardStyle = {
     border: '1px solid #e0e0e0',
